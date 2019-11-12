@@ -52,6 +52,7 @@ public class CollectionTask18 {
 
      }
     public static void main(String[] args) {
+        System.out.println("asdsd");
         Science student1 = new Science ("Иванов", 67, 76, 43, 67, 78);
         Science student2 = new Science ("Петров", 56, 63, 79, 86, 56);
         Science student3 = new Science ("Сидоров", 87, 76, 57, 67, 63);

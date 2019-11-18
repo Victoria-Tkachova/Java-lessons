@@ -21,7 +21,6 @@ public class StudentsAge {
         int result = 0;
         ArrayList <Integer> resultTemp = new ArrayList<Integer>();
         int resultTempSum = 0;
-        int lengthOfRightElements = 0;
         for (int i = 0; i < studentsAgeList.size(); i++) {
             if (studentsAgeList.get(i) >= 17 && studentsAgeList.get(i) <= 22) {
                resultTemp.add(studentsAgeList.get(i));

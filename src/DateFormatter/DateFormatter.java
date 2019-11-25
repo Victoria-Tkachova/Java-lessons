@@ -17,9 +17,37 @@ public class DateFormatter {
 
     }
 
-    public static void main(String[] args) throws ParseException {
-        String date = "01.02.1989";
-        DateFormatter obj = new DateFormatter();
-        System.out.println(obj.stringToDateFormatter(date));
+   static void one() throws  Exception{
+
+
+    }
+
+    public static void main(String[] args) throws Exception {
+        one();
+       //int q=56/0;
+       try {
+           String date = "01.02.1989";
+           DateFormatter obj = new DateFormatter();
+           System.out.println(obj.stringToDateFormatter(date));
+           try {
+               //throw  new Exception();
+               int[] arr = {1, 5, 7};
+               System.out.println(arr[9]);
+               System.out.println(arr);
+           } catch (NullPointerException e) {
+               e.printStackTrace();
+           } catch (ArithmeticException r) {
+               System.out.println("catch 2");
+              // System.exit(3);
+
+           } finally {
+               System.out.println("finally");
+           }
+       }catch (IllegalAccessError t){
+           System.out.println("catch outer");
+       }
+       finally{
+           System.out.println("finally 2");
+       }
     }
 }

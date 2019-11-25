@@ -3,7 +3,7 @@ package StudentsAge;
 import java.util.ArrayList;
 
 public class StudentsAge {
-    public ArrayList<Integer> studentsAgeGenerator(int totalNumberStudents, int wrongAgeNumber) {
+    ArrayList<Integer> studentsAgeGenerator(int totalNumberStudents, int wrongAgeNumber) {
         ArrayList<Integer> studentsAgeList = new ArrayList<Integer>();
         int minAge = 17;
         int maxAge = 22;
@@ -17,13 +17,14 @@ public class StudentsAge {
         return studentsAgeList;
     }
 
-    public int averageAgeCounter(ArrayList<Integer> studentsAgeList) {
+    int averageAgeCounter(ArrayList<Integer> studentsAgeList) {
         int result = 0;
         ArrayList <Integer> resultTemp = new ArrayList<Integer>();
         int resultTempSum = 0;
         for (int i = 0; i < studentsAgeList.size(); i++) {
             if (studentsAgeList.get(i) >= 17 && studentsAgeList.get(i) <= 22) {
                resultTemp.add(studentsAgeList.get(i));
+
             }
             else {
                 try {

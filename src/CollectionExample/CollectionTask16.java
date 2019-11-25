@@ -11,12 +11,6 @@ public class CollectionTask16 {
 class Student implements Comparable<Student> {
     String surname;
 
-
-    Student() {
-        surname = "Нет такого студента";
-
-    }
-
     Student(String surname) {
         this.surname = surname;
     }
@@ -32,7 +26,8 @@ class Student implements Comparable<Student> {
 }
      class University {
          Set<Student> students = new TreeSet<Student>();
-         static void removeFromUniversity(ArrayList<Student> spisok, String lastName) {
+
+         void removeFromUniversity(ArrayList<Student> spisok, String lastName) {
              Iterator<Student> iteratorRemoving = spisok.iterator();
              while (iteratorRemoving.hasNext()) {
                  if ((iteratorRemoving.next().getSurname()).equals(lastName)) {
@@ -55,8 +50,6 @@ class Student implements Comparable<Student> {
 
         public static void main(String[] args) {
              University un1=new University();
-
-
             ArrayList<Student> spisok = new ArrayList<>();
             Student student1 = new Student("Иванов");
             Student student2 = new Student("Петров");
@@ -84,13 +77,13 @@ class Student implements Comparable<Student> {
                 System.out.println("В университете учатся: " + p.getSurname());
             }
 
-            removeFromUniversity(spisok, "Иванов");
+            un1.removeFromUniversity(spisok, "Иванов");
 
             for (Student p : spisok) {
                 System.out.println("После отчисления в университете остались: " + p.getSurname());
             }
 
-            takeToUniversity(spisok, "Ткачёв");
+            un1.takeToUniversity("Ткачёв");
 
             for (Student p: spisok) {
                 System.out.println("После зачисления в университете учатся: " + p.getSurname());

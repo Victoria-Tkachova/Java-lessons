@@ -6,95 +6,77 @@ public class WordsGame {
 
     static ArrayList<String> listOfWords = new ArrayList<>();
     String guess, madeWord;
-    int totalGuess;
+    int wrongGuess;
     Scanner scan = new Scanner(System.in);
     List<Character> madeWordChar;
-
+    String secretWord;
+    String guessedWord;
 
     static {
         Collections.addAll(listOfWords, "elephant", "alphabet", "rabbit", "crime", "murder", "attic", "leg");
     }
 
-    String wordsMaker(ArrayList listOfWords) {
-        String madeWord = "";
-        String madeWord1 = null;
-        System.out.println("Choose the word!");
-        Scanner scan = new Scanner(System.in);
-        if (scan.hasNextLine()) {
-            String st1 = scan.nextLine();
-            for (int i = 0; i < listOfWords.size(); i++) {
-                if (listOfWords.contains(st1) == true) {
-                    madeWord1 = st1;
-                } else {
-                    System.out.println("There is no such word in the list. Try another word!");
-                    // scan.nextLine();
-                }
-            }
-        } else {
-            System.out.println("It is not a word! Try again!");
+    void wordsMaker() {
+        Random wordsMaker = new Random();
+        int wordIndex = wordsMaker.nextInt(listOfWords.size() - 1);
+        guessedWord = listOfWords.get(wordIndex);
+        System.out.println(guessedWord);
+        StringBuilder starConverter = new StringBuilder();
+        for (int i = 0; i < guessedWord.length(); i++) {
+            starConverter.append("*");
         }
-        for (int i = 0; i < madeWord1.length(); i++) {
-            madeWord += "*";
-        }
-
-        return madeWord;
+        secretWord = starConverter.toString();
+        System.out.println(secretWord);
     }
 
-    void guess(String madeWord) {
-        List<Integer> madeWordPositions = getMaskPositions (madeWord);
-        StringBuilder madeWord1 = new StringBuilder(madeWord);
-        while (madeWord.toString().contains("*") && totalGuess < 10) {
-            for (int i=0; i < madeWord.length(); i++) {
-                char guess = getNextGuess();
-                for (Integer position : madeWordPositions) {
-                    if (madeWord1.charAt(position) == guess)
-                    {
-                        // guess is correct: replace the star with the right letter
-                        madeWord1.setCharAt (position, guess);
-                    }
-                }
-                // now re-display the masked word (showing any correctly-guessed letters):
-                System.out.println(madeWord1);
+    void guessLetter() {
+        while (wrongGuess < 10) {
+            System.out.println(secretWord);
+            System.out.println("Guess any letter. Your letter is: ");
+            Scanner scan = new Scanner(System.in);
+            String choice = scan.nextLine().toLowerCase();
+            int index = guessedWord.indexOf(choice);
+            if (index == -1) {
+                wrongGuess++;
+                System.out.println("There is no such letter in the word!");
             }
-            // no more dashes left: all missing letters correctly guessed:
-            System.out.println( "Well Done!" );
-            break;
+            while (index != -1) {
+                replaceStar(choice, index);
+                if (secretWord.length() < index) {
+                index = guessedWord.indexOf(choice, index + 1);} // проверка если буква последняя, может вылететь исключение
+            }
+            if (secretWord.equals(guessedWord) == true) {
+                System.out.println("Well Done!");
+                break;
             }
         }
+    }
 
+    private void replaceStar(String letter, int index) {
+        char[] wordArray = secretWord.toCharArray();
+        wordArray[index] = letter.charAt(0);
+        secretWord = String.copyValueOf(wordArray);
+    }
 
 
     List<Integer> getMaskPositions(String madeWord) {
         List<Integer> result = new ArrayList<>();
-        for (int i=0; i < madeWord.length(); i++) {
+        for (int i = 0; i < madeWord.length(); i++) {
             result.add(Arrays.asList(madeWord).indexOf(i));
         }
         return result;
     }
 
-    char getNextGuess() {
-        System.out.println("Guess any letter! Your letter is: ");
-        guess = scan.next().toLowerCase();
-        System.out.println(guess);
-        totalGuess++;
-        guess = guess.replaceAll("[^!-~\\u20000-\\uFE1F\\uFF00-\\uFFEF]", "");
-        char[] charArray = guess.toCharArray();
-        char result = charArray[0];
-        return result;
+
+
+    public static void main(String[] args) {
+        System.out.println(listOfWords);
+        WordsGame obj = new WordsGame();
+        obj.wordsMaker();
+        obj.guessLetter();
+
 
     }
-
-
-    public static void main (String[]args){
-            System.out.println(listOfWords);
-            WordsGame obj = new WordsGame();
-            String guess = obj.wordsMaker(listOfWords);
-            System.out.println(guess);
-            obj.guess(guess);
-
-
-        }
-
 
 
 }

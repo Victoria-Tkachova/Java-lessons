@@ -1,6 +1,5 @@
 package Fitness;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -12,9 +11,9 @@ public class FitnessTrainers {
         Collections.addAll(listOfTrainers, "Smith", "Tailor", "Daniels", "Kruz", "Kidman", "Harvey");
     }
 
-    void enjoyFitness (ArrayList listOfTrainers) {
+    void enjoyFitness () {
         Map <String, Map<String, LocalDateTime>> fitnessClub = new HashMap<>();
-        String fitnessName = fitnessLastName(listOfTrainers);
+        String fitnessName = chooseFitnessTrainer();
         Map<String, LocalDateTime> training = enjoyTraining();
         fitnessClub.put(fitnessName, training);
         for (Map.Entry entry : fitnessClub.entrySet()) {
@@ -25,22 +24,27 @@ public class FitnessTrainers {
 
     }
 
-    String fitnessLastName(ArrayList listOfTrainers) {
+   static String chooseFitnessTrainer() {
         String fitnessLastName = "";
         System.out.println("Choose the trainer!");
-        Scanner scan = new Scanner(System.in);
-        if (scan.hasNextLine()) {
-            String st1 = scan.nextLine();
-            for (int i = 0; i < listOfTrainers.size(); i++) {
-                if (listOfTrainers.contains(st1) == true) {
-                    fitnessLastName = st1;
-                } else {
-                    System.out.println("There is no such trainer in the list!");
-                    // scan.nextLine();
+        while (true) {
+            Scanner scan = new Scanner(System.in);
+            if (scan.hasNextLine()) {
+                String st1 = scan.nextLine();
+                for (int i = 0; i < listOfTrainers.size(); i++) {
+                    if (listOfTrainers.contains(st1) == true) {
+                        fitnessLastName = st1;
+                        break;
+                    }
+                } if(!fitnessLastName.isEmpty()) {
+                    return fitnessLastName;
+                }
+                else {
+                    System.out.println("There is no such trainer in the list! Try again!");
                 }
             }
         }
-        return fitnessLastName;
+
     }
 
     Map<String, LocalDateTime> enjoyTraining () {
@@ -70,9 +74,12 @@ public class FitnessTrainers {
     }
 
     public static void main(String[] args) {
-        System.out.println(listOfTrainers);
-        FitnessTrainers obj = new FitnessTrainers();
-        obj.enjoyFitness(listOfTrainers);
+       // System.out.println(listOfTrainers);
+        //FitnessTrainers obj = new FitnessTrainers();
+        //obj.enjoyFitness();
+        // chooseFitnessTrainer();
+
+
     }
 
 }

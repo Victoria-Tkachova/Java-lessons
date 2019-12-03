@@ -20,12 +20,10 @@ public class ExampleTreeSet {
 
         Set<Student> studentHashSet = new HashSet<>();
         Collections.addAll(studentHashSet, student1, student2, student3, student4);
-        Comparator<Student> newComp = Comparator.comparing(Student::getEmail);
-        NavigableSet<Student> sortedSet = new TreeSet<>(newComp);
-        sortedSet.addAll(studentHashSet);
 
-        for (Student temp1:sortedSet) {
-            System.out.println(temp1.getLastName() + " " + temp1.getEmail());
+
+        for (Student temp1:studentHashSet) {
+            System.out.println("список по хэш-сету: " + temp1.getLastName() + " " + temp1.getEmail());
         }
 
     }

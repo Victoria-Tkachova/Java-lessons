@@ -23,7 +23,6 @@ public class Student {
            Scanner scan = new Scanner(System.in);
            if (scan.hasNextInt()) {
                int mode = scan.nextInt();
-               if (mode == 1 || mode == 2 || mode == 3) {
                    switch (mode) {
                        case 1:
                            Collections.sort(list, new LastNameComparator());
@@ -34,16 +33,16 @@ public class Student {
                        case 3:
                            Collections.sort(list, new AverageMarkComparator());
                            break;
+                       default:
+                           System.out.println("Please choose the number from 1 to 3. Thank you!");
+                           continue;
                    }
-               }
-               else {
-                   System.out.println("Please choose the number from 1 to 3. Thank you!");
-               }
-               break; // ?????
            }
            else {
-               System.out.println("This is not a number. Please try again!");
+              System.out.println("This is not a number. Please try again!");
+              continue;
            }
+           break;
        }
 
    }

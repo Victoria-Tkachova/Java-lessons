@@ -1,20 +1,56 @@
 package Fitness;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class FitnessCenter {
     private List<Trainers> fitnessCenter = new ArrayList<>();
+    Set <LocalDate> holidays = new HashSet<>();
+    int workDayCounter = 5;
+    int firstShiftBegin = 8;
+    int secondShiftBegin = 15;
+    int shiftCounter = 8;
 
-    boolean recruitTrainer (ArrayList fitnessCenter, Trainers newTrainer) {
-        boolean result;
-        result = fitnessCenter.add(newTrainer);
-        return result;
+    boolean recruitTrainer (Trainers newTrainer) {
+        Scanner scan = new Scanner (System.in);
+        System.out.println("What shift do you prefer?");
+        int shift = scan.nextInt();
+        int currentYear = LocalDate.now().getYear();
+        LocalDate recruitDate = LocalDate.now();
+        LocalDate nextDay=recruitDate;
+        boolean checkYear=checkCurrentYear (recruitDate, currentYear);
+        while (checkYear){
+            if (checkWorkingDay (nextDay) == true) {
+                newTrainer.workSchedule.put(LocalDateTime.of(nextDay, LocalTime.of(shift==1?firstShiftBegin:secondShiftBegin, 0)), newTrainer.trainingDuration);
+            }
+            nextDay = nextDay.plusDays(1);
+            checkYear = checkCurrentYear (nextDay, currentYear);
+        }
+        System.out.println(newTrainer.workSchedule);
+        return fitnessCenter.add(newTrainer);
     }
 
-    void fireTrainer (ArrayList fitnessTrainers, String lastName) {
+    private boolean checkWorkingDay(LocalDate recruitDate) {
+        if (recruitDate.getDayOfWeek().getValue() < workDayCounter) {
+            if (!holidays.contains(recruitDate)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    boolean checkCurrentYear (LocalDate someDate, int currentYear) {
+        if (someDate.getYear() == currentYear) {
+            return true;
+        }
+        return false;
+    }
+
+    boolean fireTrainer (String lastName) { // переделать на булевое значение
         Iterator<Trainers> iteratorRemoving = fitnessCenter.iterator();
         while (iteratorRemoving.hasNext()) {
             if ((iteratorRemoving.next().getSurname()).equals(lastName)) {
@@ -22,9 +58,21 @@ public class FitnessCenter {
                 break;
             }
         }
+        return true;
     }
 
-    String chooseFitnessTrainer(ArrayList<Trainers> fitnessCenter) {
+    boolean addHoliday (LocalDate holidayDate) {
+        return holidays.add(holidayDate);
+    }
+
+    boolean removeHoliday (LocalDate holidayDate) {
+        return holidays.remove(holidayDate);
+    }
+
+
+
+
+    String chooseFitnessTrainer(ArrayList<Trainers> fitnessCenter) { // расширить поиск и по виду спорта
         String fitnessLastName = "";
         System.out.println("Enter your trainer last name: ");
         while (true) {
@@ -91,16 +139,22 @@ public class FitnessCenter {
         return training;
     }
 
-    void enjoyFitness (ArrayList<Trainers> fitnessCenter) {
-        Map <String, Map<String, LocalDateTime>> fitnessClub = new HashMap<>();
-        String fitnessName = chooseFitnessTrainer (fitnessCenter);
-        Map<String, LocalDateTime> training = enjoyTraining(fitnessName, fitnessCenter.get(1).getWorkingScheduleStart(), fitnessCenter.get(1).getWorkingScheduleEnd());
-        fitnessClub.put(fitnessName, training);
-        for (Map.Entry entry : fitnessClub.entrySet()) {
-            for (Map.Entry temp : training.entrySet()) {
-                System.out.println("Trainer name: " + entry.getKey() + "\nClient name: " + temp.getKey() + "\nTraining date: " + temp.getValue());
-            }
-        }
-    }
+//    void enjoyFitness (ArrayList<Trainers> fitnessCenter) {
+//        Map <String, Map<String, LocalDateTime>> fitnessClub = new HashMap<>();
+//        String fitnessName = chooseFitnessTrainer (fitnessCenter);
+//        Map<String, LocalDateTime> training = enjoyTraining(fitnessName, fitnessCenter.get(1).getWorkingScheduleStart(), fitnessCenter.get(1).getWorkingScheduleEnd());
+//        fitnessClub.put(fitnessName, training);
+//        for (Map.Entry entry : fitnessClub.entrySet()) {
+//            for (Map.Entry temp : training.entrySet()) {
+//                System.out.println("Trainer name: " + entry.getKey() + "\nClient name: " + temp.getKey() + "\nTraining date: " + temp.getValue());
+//            }
+//        }
+//    }
 
+    public static void main(String[] args) {
+        FitnessCenter obj = new FitnessCenter();
+        Trainers trainer1 = new Trainers("Doe", "Fitness", 60);
+        obj.addHoliday(LocalDate.of(2019, 12, 25));
+        obj.recruitTrainer(trainer1);
+    }
 }

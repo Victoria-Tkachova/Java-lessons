@@ -1,9 +1,12 @@
 package Fitness;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class Trainers {
@@ -11,27 +14,35 @@ public class Trainers {
     private String sportType;
     private LocalDateTime workingScheduleStart;
     private LocalDateTime workingScheduleEnd;
+    int trainingDuration;
+    Map<LocalDateTime,Integer> workSchedule = new HashMap<>();
 
-    Trainers (String surname, String sportType) {
+    Trainers (String surname, String sportType, int trainingDuration) {
         this.surname = surname;
         this.sportType = sportType;
-
+        this.trainingDuration = trainingDuration;
     }
 
     String getSurname () { return surname; }
-    LocalDateTime getWorkingScheduleStart () {return workingScheduleStart; }
-    LocalDateTime getWorkingScheduleEnd () {return workingScheduleEnd; }
 
 
-    LocalDateTime setWorkingStartTime(String surname, String startWorkingTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, d MM yyyy, hh:mm a");
-        LocalDateTime workingScheduleStart = LocalDateTime.parse(startWorkingTime, formatter);
-        return workingScheduleStart;
+    void setTraining (LocalDateTime trainingTime, int duration) {
+        workSchedule.put(trainingTime, duration);
     }
 
-    LocalDateTime setWorkingEndTime (String surname, LocalDateTime workingScheduleStart) {
-        LocalDateTime workingScheduleEnd = workingScheduleStart.plusHours(8);
-        return workingScheduleEnd;
+    Integer removeTraining (LocalDateTime trainingTime) {
+        return workSchedule.remove(trainingTime);
+    }
+
+
+    public static void main(String[] args) {
+        Trainers trainer1 = new Trainers("Smith", "Fitness", 60);
+        LocalDateTime localTime1 = LocalDateTime.of(2019, 12, 3, 9, 00);
+        LocalDateTime localTime2 = LocalDateTime.of(2019, 12, 3, 9, 00);
+        trainer1.workSchedule.put(localTime1, 9);
+        trainer1.workSchedule.put(localTime2, 9);
+        System.out.println(trainer1.workSchedule.toString());
+
     }
 
 

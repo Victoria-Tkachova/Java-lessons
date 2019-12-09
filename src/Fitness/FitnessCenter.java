@@ -50,15 +50,15 @@ public class FitnessCenter {
         return false;
     }
 
-    boolean fireTrainer (String lastName) { // переделать на булевое значение
+    boolean fireTrainer (String lastName) {
         Iterator<Trainers> iteratorRemoving = fitnessCenter.iterator();
         while (iteratorRemoving.hasNext()) {
             if ((iteratorRemoving.next().getSurname()).equals(lastName)) {
                 iteratorRemoving.remove();
-                break;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     boolean addHoliday (LocalDate holidayDate) {
@@ -70,91 +70,116 @@ public class FitnessCenter {
     }
 
 
-
-
-    String chooseFitnessTrainer(ArrayList<Trainers> fitnessCenter) { // расширить поиск и по виду спорта
-        String fitnessLastName = "";
-        System.out.println("Enter your trainer last name: ");
-        while (true) {
-            Scanner scan = new Scanner(System.in);
-            if (scan.hasNextLine()) {
-                String st1 = scan.nextLine();
-                for (int i = 0; i < fitnessCenter.size(); i++) {
-                    if ((fitnessCenter.get(i).getSurname()).contains(st1) == true) {
-                        fitnessLastName = st1;
-                        break;
+    Trainers chooseFitnessTrainer() {
+        String fitnessLastName;
+        String typeOfSport;
+        System.out.println("Do you know your trainer last name?");
+        Scanner scan = new Scanner(System.in);
+        String answer = scan.nextLine().toLowerCase();
+        if (answer.equals("yes")) {
+            System.out.println("Enter your trainer last name: ");
+            while (true) {
+                Scanner scan1 = new Scanner(System.in);
+                if (scan1.hasNextLine()) {
+                    String st1 = scan1.nextLine();
+                    for (int i = 0; i < fitnessCenter.size(); i++) {
+                        if ((fitnessCenter.get(i).getSurname()).contains(st1) == true) {
+                            fitnessLastName = st1;
+                            return fitnessCenter.get(i);
+                        } else {
+                            System.out.println("There is no such trainer in the list! Try again!");
+                        }
                     }
-                } if(!fitnessLastName.isEmpty()) {
-                    return fitnessLastName;
                 }
-                else {
-                    System.out.println("There is no such trainer in the list! Try again!");
+            }
+        }
+        else {
+            System.out.println("Please enter the type of sport you are interested in: ");
+            while (true) {
+                Scanner scan2 = new Scanner(System.in);
+                if (scan2.hasNextLine()) {
+                    String st2 = scan2.nextLine();
+                    for (int i = 0; i < fitnessCenter.size(); i++) {
+                        if ((fitnessCenter.get(i).getSportType()).contains(st2) == true) {
+                            System.out.println("Fitness trainer for your sport type is " + fitnessCenter.get(i).getSurname());
+                            return fitnessCenter.get(i);
+                        }
+                        else {
+                            System.out.println("We do not have trainings in this sport!");
+                        }
+                    }
                 }
             }
         }
     }
 
-    boolean checkTrainerTime (String trainerLastName, String lastName, LocalDateTime trainingStart, int trainingDuration, LocalDateTime workingScheduleStart, LocalDateTime workingScheduleEnd) {
-        boolean available = false;
-        Duration workingDayDuration = Duration.between(workingScheduleStart, workingScheduleEnd);
-      //  Duration trainingDuration1 = (trainingStart.plusHours((long) trainingDuration);
-        if (false) { // проверка содержит ли рабочее время время тренировки?????????!!!!!
-          //  workingDayDuration.minus(trainingDuration1);
-            available = true;
-
-        }return available;
+    boolean checkTrainerTime (Trainers myTrainer, LocalDateTime trainingStart) {
+        Set<Map.Entry<LocalDateTime, Integer>> entrySet = myTrainer.workSchedule.entrySet();
+        if (myTrainer.workSchedule.containsKey(trainingStart)) {
+            for (Map.Entry<LocalDateTime, Integer> temp : entrySet)
+            return !trainingStart.isAfter(temp.getKey());
+        }
+        return false;
    }
 
 
-    Map<String, LocalDateTime> enjoyTraining (String trainerLastName, LocalDateTime workingScheduleStart, LocalDateTime workingScheduleEnd) {
+    Map<String, LocalDateTime> enjoyTraining (Trainers myTrainer) {
         Map<String, LocalDateTime> training = new HashMap<>();
         String lastName = "";
         LocalDateTime dateOfTraining = null;
         int trainingDuration = 0;
         System.out.println("Please enter your name: ");
-        Scanner scan = new Scanner(System.in);
-        if (scan.hasNextLine()) {
-            lastName = scan.nextLine();
-        }
-        else {
-            System.out.println("Please enter your last name!");
-        }
-        System.out.println("Please enter your training time: ");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMM d, yyyy HH:mm:ss a");
-        Scanner scan1 = new Scanner(System.in);
-        try {
-            dateOfTraining = LocalDateTime.parse(scan1.nextLine(), formatter);
-        }
-        catch(IllegalArgumentException ex)
-        {
-            System.out.println(String.format("Ooops! Something wrong", ex.getMessage()));
-        }
-        if (checkTrainerTime(trainerLastName, lastName, dateOfTraining, trainingDuration, workingScheduleStart, workingScheduleEnd) == true) {
-            training.put (lastName, dateOfTraining);
-            System.out.println("You are added to training list successfully!");
-        }
-        else {
-            System.out.println("This training time is not available. Try another one!");
+        while (true) {
+            while (true) {
+                Scanner scan = new Scanner(System.in);
+                if (scan.hasNextLine()) {
+                    lastName = scan.nextLine();
+                    break;
+                } else {
+                    System.out.println("Please enter your last name!");
+                }
+            }
+            System.out.println("Please enter your training time: ");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMM d, yyyy HH:mm:ss a");
+            while (true) {
+                Scanner scan1 = new Scanner(System.in);
+                try {
+                    dateOfTraining = LocalDateTime.parse(scan1.nextLine(), formatter);
+                    System.out.println(dateOfTraining);
+                    break;
+                } catch (IllegalArgumentException ex) {
+                    System.out.println(String.format("Ooops! Something wrong", ex.getMessage()));
+                }
+            }
+            if (checkTrainerTime(myTrainer, dateOfTraining) == true) {
+                training.put(lastName, dateOfTraining);
+                myTrainer.workSchedule.remove(dateOfTraining);
+                System.out.println("You are added to training list successfully!");
+                break;
+            } else {
+                System.out.println("This training time is not available. Try another one!");
+            }
         }
         return training;
     }
 
-//    void enjoyFitness (ArrayList<Trainers> fitnessCenter) {
-//        Map <String, Map<String, LocalDateTime>> fitnessClub = new HashMap<>();
-//        String fitnessName = chooseFitnessTrainer (fitnessCenter);
-//        Map<String, LocalDateTime> training = enjoyTraining(fitnessName, fitnessCenter.get(1).getWorkingScheduleStart(), fitnessCenter.get(1).getWorkingScheduleEnd());
-//        fitnessClub.put(fitnessName, training);
-//        for (Map.Entry entry : fitnessClub.entrySet()) {
-//            for (Map.Entry temp : training.entrySet()) {
-//                System.out.println("Trainer name: " + entry.getKey() + "\nClient name: " + temp.getKey() + "\nTraining date: " + temp.getValue());
-//            }
-//        }
-//    }
+
+    void enjoyFitness () {
+        Trainers myTrainer = chooseFitnessTrainer();
+        Map<String, LocalDateTime> training = enjoyTraining(myTrainer);
+        for (Map.Entry entry : training.entrySet()) {
+                System.out.println("Trainer name: " + myTrainer.getSurname() + "\nClient name: " + entry.getKey() + "\nTraining date: " + entry.getValue());
+            }
+        }
+
 
     public static void main(String[] args) {
         FitnessCenter obj = new FitnessCenter();
         Trainers trainer1 = new Trainers("Doe", "Fitness", 60);
         obj.addHoliday(LocalDate.of(2019, 12, 25));
         obj.recruitTrainer(trainer1);
+        obj.enjoyFitness();
+        obj.enjoyFitness();
+
     }
 }

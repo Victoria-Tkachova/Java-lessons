@@ -74,10 +74,10 @@ public class FitnessTrainers {
     }
 
     public static void main(String[] args) {
-       // System.out.println(listOfTrainers);
-        //FitnessTrainers obj = new FitnessTrainers();
-        //obj.enjoyFitness();
-        // chooseFitnessTrainer();
+       System.out.println(listOfTrainers);
+        FitnessTrainers obj = new FitnessTrainers();
+        obj.enjoyFitness();
+        chooseFitnessTrainer();
 
 
     }

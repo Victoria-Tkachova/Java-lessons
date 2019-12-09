@@ -24,6 +24,7 @@ public class Trainers {
     }
 
     String getSurname () { return surname; }
+    String getSportType () {return sportType; }
 
 
     void setTraining (LocalDateTime trainingTime, int duration) {

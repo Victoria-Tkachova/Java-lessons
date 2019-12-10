@@ -71,6 +71,8 @@ public class FitnessCenter {
 
 
     Trainers chooseFitnessTrainer() {
+        //метод не должен делать 2 работы, давайте учтем ситуацию когда у нас есть тренера с похожими фио Иванов и Иванидзе например
+        // сейчас найдем только одного, кто в списке раньше
         String fitnessLastName;
         String typeOfSport;
         System.out.println("Do you know your trainer last name?");
@@ -83,6 +85,7 @@ public class FitnessCenter {
                 if (scan1.hasNextLine()) {
                     String st1 = scan1.nextLine();
                     for (int i = 0; i < fitnessCenter.size(); i++) {
+                       
                         if ((fitnessCenter.get(i).getSurname()).contains(st1) == true) {
                             fitnessLastName = st1;
                             return fitnessCenter.get(i);
@@ -114,10 +117,12 @@ public class FitnessCenter {
     }
 
     boolean checkTrainerTime (Trainers myTrainer, LocalDateTime trainingStart) {
+        
         Set<Map.Entry<LocalDateTime, Integer>> entrySet = myTrainer.workSchedule.entrySet();
         if (myTrainer.workSchedule.containsKey(trainingStart)) {
             for (Map.Entry<LocalDateTime, Integer> temp : entrySet)
-            return !trainingStart.isAfter(temp.getKey());
+        // в моем понимании тут ошибка
+                return !trainingStart.isAfter(temp.getKey());
         }
         return false;
    }

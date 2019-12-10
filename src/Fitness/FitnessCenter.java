@@ -158,7 +158,7 @@ public class FitnessCenter {
             }
             if (checkTrainerTime(myTrainer, dateOfTraining) == true) {
                 training.put(lastName, dateOfTraining);
-                myTrainer.workSchedule.remove(dateOfTraining);
+                myTrainer.workSchedule.remove(dateOfTraining); // создать мапу с занятым временем и подумать о реализации групповых тренировок
                 System.out.println("You are added to training list successfully!");
                 break;
             } else {

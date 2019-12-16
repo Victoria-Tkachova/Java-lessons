@@ -1,10 +1,6 @@
 package Fitness;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,8 +12,8 @@ public class Trainers {
     private LocalDateTime workingScheduleEnd;
     int trainingDuration;
     Map<LocalDateTime,Integer> workSchedule = new HashMap<>();
-    Map<LocalDateTime, Integer> individualTrainings = new HashMap<>();
-    Map<LocalDateTime, Integer> groupTrainings = new HashMap<>();
+    Map<String, Map<LocalDateTime, Integer>> individualTrainings = new HashMap<>();
+    Map<String, Map<LocalDateTime, Integer>> groupTrainings = new HashMap<>();
 
     Trainers (String surname, Enum sportType, int trainingDuration) {
         this.surname = surname;

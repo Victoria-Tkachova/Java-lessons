@@ -1,6 +1,5 @@
 package Fitness;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -9,32 +8,30 @@ import java.util.*;
 
 public class FitnessCenter {
     private List<Trainers> fitnessCenter = new ArrayList<>();
-    Set <LocalDate> holidays = new HashSet<>();
+    Set<LocalDate> holidays = new HashSet<>();
     int workDayCounter = 5;
     int firstShiftBegin = 8;
     int secondShiftBegin = 15;
     int shiftCounter = 8;
+    Map<LocalDateTime, Integer> training = new HashMap<>();
 
-    boolean recruitTrainer (Trainers newTrainer) {
-        Scanner scan = new Scanner (System.in);
-        System.out.println("What shift do you prefer?");
-        int shift = scan.nextInt();
+    boolean recruitTrainer(Trainers newTrainer, int shift) { // нанимаем тренера на работу
         int currentYear = LocalDate.now().getYear();
         LocalDate recruitDate = LocalDate.now();
-        LocalDate nextDay=recruitDate;
-        boolean checkYear=checkCurrentYear (recruitDate, currentYear);
-        while (checkYear){
-            if (checkWorkingDay (nextDay) == true) {
-                newTrainer.workSchedule.put(LocalDateTime.of(nextDay, LocalTime.of(shift==1?firstShiftBegin:secondShiftBegin, 0)), newTrainer.trainingDuration);
+        LocalDate nextDay = recruitDate;
+        boolean checkYear = checkCurrentYear(recruitDate, currentYear);
+        while (checkYear) {
+            if (checkWorkingDay(nextDay) == true) {
+                newTrainer.workSchedule.put(LocalDateTime.of(nextDay, LocalTime.of(shift == 1 ? firstShiftBegin : secondShiftBegin, 0)), newTrainer.trainingDuration);
             }
             nextDay = nextDay.plusDays(1);
-            checkYear = checkCurrentYear (nextDay, currentYear);
+            checkYear = checkCurrentYear(nextDay, currentYear);
         }
         System.out.println(newTrainer.workSchedule);
         return fitnessCenter.add(newTrainer);
     }
 
-    private boolean checkWorkingDay(LocalDate recruitDate) {
+    private boolean checkWorkingDay(LocalDate recruitDate) { // проверяем рабочий ли день приема на работу
         if (recruitDate.getDayOfWeek().getValue() < workDayCounter) {
             if (!holidays.contains(recruitDate)) {
                 return true;
@@ -43,14 +40,14 @@ public class FitnessCenter {
         return false;
     }
 
-    boolean checkCurrentYear (LocalDate someDate, int currentYear) {
+    boolean checkCurrentYear(LocalDate someDate, int currentYear) { // проверяем год при приеме на работу
         if (someDate.getYear() == currentYear) {
             return true;
         }
         return false;
     }
 
-    boolean fireTrainer (String lastName) {
+    boolean fireTrainer(String lastName) { // увольням тренера
         Iterator<Trainers> iteratorRemoving = fitnessCenter.iterator();
         while (iteratorRemoving.hasNext()) {
             if ((iteratorRemoving.next().getSurname()).equals(lastName)) {
@@ -61,196 +58,136 @@ public class FitnessCenter {
         return false;
     }
 
-    boolean addHoliday (LocalDate holidayDate) {
+    boolean addHoliday(LocalDate holidayDate) {
         return holidays.add(holidayDate);
-    }
+    } // возможность добавить праздники
 
-    boolean removeHoliday (LocalDate holidayDate) {
+    boolean removeHoliday(LocalDate holidayDate) {
         return holidays.remove(holidayDate);
-    }
+    } // возможность удалить праздник
 
-    Trainers modeOfTrainerChoose () {
-        System.out.println("Do you know your trainer last name?");
-        Scanner scan = new Scanner(System.in);
-        String answer = scan.nextLine().toLowerCase();
-        if (answer.equals("yes")) {
-            return chooseFitnessTrainer();
-        }
-        else {
-            return chooseSportType();
-        }
-    }
-
-
-    Trainers chooseFitnessTrainer() {
-        String fitnessLastName;
-        ArrayList<Trainers> listOfAvailableTrainers = new ArrayList();
-        System.out.println("Enter your trainer last name: ");
-        while (true) {
-            Scanner scan1 = new Scanner(System.in);
-            if (scan1.hasNextLine()) {
-                String st1 = scan1.nextLine();
-                for (int i = 0; i < fitnessCenter.size(); i++) {
-                    fitnessLastName = st1;
-                    if (!(fitnessCenter.get(i).getSurname()).contains(st1) == true) {
-                        System.out.println("There is no such trainer in the list! Try again!");
-                    } else {
-                    do {
-                        listOfAvailableTrainers.add(fitnessCenter.get(i));
-                       // i++;
-                    } while ((fitnessCenter.get(i).getSurname()).contains(st1) == true); }
+    void modeOfTrainerChoose(int mode) { // выбор тренера по фамилиии или по спорт типу (1 - фамилия, 2 - спорт тип)
+        switch (mode) {
+            case 1:
+                for (Trainers temp : fitnessCenter) {
+                    System.out.println(temp.getSurname());
                 }
-            }
-            return chooseOneTrainer(listOfAvailableTrainers);
+                break;
+            case 2:
+                for (Trainers temp1 : fitnessCenter) {
+                    System.out.println(temp1.getSportType() + " " + temp1.getSurname());
+                }
+                break;
         }
     }
 
-    Trainers chooseSportType () {
+    LocalDateTime checkDateFormat(String dayOfTraining) { // проверка ввода и форматирования даты пользователя
+        LocalDateTime dateOfTraining = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MM/dd/yyy, hh:mm a");
+        try {
+            dateOfTraining = LocalDateTime.parse(dayOfTraining, formatter);
+        } catch (IllegalArgumentException iaex) {
+            throw new IllegalArgumentException("The string is not parsed!", iaex);
+        }
+        return dateOfTraining;
+    }
+
+    ArrayList<Trainers> chooseFitnessTrainer(String surname) { // проверка тренера по части фамилии
+        ArrayList<Trainers> listOfAvailableTrainers = new ArrayList();
+        for (int i = 0; i < fitnessCenter.size(); i++) {
+            if ((fitnessCenter.get(i).getSurname()).contains(surname)) {
+                listOfAvailableTrainers.add(fitnessCenter.get(i));
+            } else {
+                System.out.println("There is no such trainer. Please try again!");
+            }
+        }
+        return listOfAvailableTrainers;
+    }
+
+    ArrayList<Trainers> chooseSportType(String answer) { // проверка тренеров по спорт типу
         ArrayList listOfAvailableTrainers = new ArrayList();
         Enum sportType;
-        System.out.println("You can choose one of the following sport types: FITNESS, YOGA, POWERLIFTING, SWIMMING");
-        Scanner scan = new Scanner(System.in);
-        String answer = scan.nextLine().toUpperCase();
         sportType = SportTypes.valueOf(answer);
         for (int i = 0; i < fitnessCenter.size(); i++) {
-            do {
+            if ((fitnessCenter.get(i).getSportType().equals(answer))) {
                 listOfAvailableTrainers.add(fitnessCenter.get(i));
-            } while (fitnessCenter.get(i).getSportType().equals(sportType));
-        }
-        return chooseOneTrainer(listOfAvailableTrainers);
-    }
-
-    Trainers chooseOneTrainer (ArrayList<Trainers> listOfAvailableTrainers) {
-        System.out.println(listOfAvailableTrainers + "\nPlease choose the trainer from the list:");
-        while (true) {
-            Scanner scan1 = new Scanner(System.in);
-            String answer1 = scan1.nextLine();
-            for (int i = 0; i > listOfAvailableTrainers.size(); i++) {
-                if ((fitnessCenter.get(i).getSurname()).equals(answer1) == true) {
-                    System.out.println("The name of your trainers is " + fitnessCenter.get(i).getSurname());
-                    return fitnessCenter.get(i);
-                } else {
-                System.out.println("Please enter the exact surname of your trainer!");
-                }
             }
         }
+        return listOfAvailableTrainers;
     }
 
-    boolean checkTrainerTime (Trainers myTrainer, LocalDateTime trainingStart) {
+    Trainers chooseOneTrainer(ArrayList<Trainers> listOfAvailableTrainers, String surname) { // выбор одного тренера
+        Trainers result = null;
+        for (Trainers temp : fitnessCenter) {
+            if ((temp.getSurname()).equals(surname)) {
+                result = temp;
+            }
+        }
+        return result;
+    }
+
+    boolean checkTrainerTime(Trainers myTrainer, LocalDateTime trainingStart) { // проверка свободно ли время у тренера
         Set<Map.Entry<LocalDateTime, Integer>> entrySet = myTrainer.workSchedule.entrySet();
         if (myTrainer.workSchedule.containsKey(trainingStart)) {
             for (Map.Entry<LocalDateTime, Integer> temp : entrySet)
                 return !trainingStart.isAfter(temp.getKey());
-                //return temp.getKey().equals(trainingStart); // ????
+            //return temp.getKey().equals(trainingStart); // ????
         }
         return false;
-   }
-
-
-    Map<String, LocalDateTime> enjoyTraining () {
-        Map<String, LocalDateTime> training = new HashMap<>();
-        String lastName = "";
-        LocalDateTime dateOfTraining = null;
-        Trainers myTrainer = null;
-        System.out.println("Please enter your name: ");
-        while (true) {
-            while (true) {
-                Scanner scan = new Scanner(System.in);
-                if (scan.hasNextLine()) {
-                    lastName = scan.nextLine();
-                    break;
-                } else {
-                    System.out.println("Please enter your last name!");
-                }
-            }
-            myTrainer = modeOfTrainerChoose();
-            dateOfTraining = chooseGroupOrIndividualTraining(myTrainer);
-            training.put(lastName, dateOfTraining);
-            if (checkTrainerTime(myTrainer, dateOfTraining) == true) {
-                training.put(lastName, dateOfTraining);
-                myTrainer.workSchedule.remove(dateOfTraining);
-                System.out.println("You are added to training list successfully!");
-                break;
-            } else {
-                System.out.println("This training time is not available. Try another one!");
-            }
-        }
-        return training;
     }
 
-    LocalDateTime chooseGroupOrIndividualTraining (Trainers myTrainer) {
-        LocalDateTime dateOfTraining = null;
-        System.out.println("What type of training do you prefer: group(1) or individual(2)?");
-        Scanner scan = new Scanner(System.in);
-        int answer = scan.nextInt();
-        switch (answer) {
+
+    Map<String, Map<LocalDateTime, Integer>> enjoyTraining (LocalDateTime dateOfTraining, String lastName, Trainers myTrainer, int mode) { // запись на тренировку
+        if (chooseGroupOrIndividualTraining(myTrainer, dateOfTraining, mode) && checkTrainerIndividualTime(myTrainer, dateOfTraining)) {
+            myTrainer.workSchedule.remove(dateOfTraining);
+            training.put(dateOfTraining, myTrainer.trainingDuration);
+            myTrainer.individualTrainings.put(lastName, training);
+            return myTrainer.individualTrainings;
+        } else {
+            if (checkTrainerGroupTime(myTrainer, dateOfTraining)) {
+                myTrainer.workSchedule.remove(dateOfTraining);
+                training.put(dateOfTraining, myTrainer.trainingDuration);
+                myTrainer.groupTrainings.put(lastName, training);
+            }
+            return myTrainer.groupTrainings;
+        }
+    }
+
+    boolean chooseGroupOrIndividualTraining(Trainers myTrainer, LocalDateTime dateOfTraining, int mode) { // выбор групповой или индивидуальной тренировки (1 - групповая, 2 - индивидуальная)
+        boolean result = false;
+        switch (mode) {
             case 1:
-                dateOfTraining = checkTrainerGroupTime (myTrainer);
+                result = checkTrainerIndividualTime(myTrainer, dateOfTraining);
                 break;
             case 2:
-                dateOfTraining = checkTrainerIndividualTime (myTrainer);
+                result = checkTrainerGroupTime(myTrainer, dateOfTraining);
                 break;
         }
-        return dateOfTraining;
+        return result;
     }
 
-    LocalDateTime checkTrainerGroupTime (Trainers myTrainer) {
-        LocalDateTime dateOfTraining = null;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMM d, yyyy HH:mm:ss a");
-        if (myTrainer.groupTrainings.isEmpty() == true) {
-            System.out.println("Please enter your training time: ");
-            while (true) {
-                Scanner scan1 = new Scanner(System.in);
-                try {
-                    dateOfTraining = LocalDateTime.parse(scan1.nextLine(), formatter);
-                    System.out.println(dateOfTraining);
-                    break;
-                } catch (IllegalArgumentException ex) {
-                    System.out.println(String.format("Ooops! Something wrong", ex.getMessage()));
-                }
+    boolean checkTrainerGroupTime(Trainers myTrainer, LocalDateTime dateOfTraining) { // проверка группового времени
+        boolean result = false;
+        if (myTrainer.groupTrainings.isEmpty() == true && myTrainer.workSchedule.containsKey(dateOfTraining)) {
+                result = true;}
+        return result;
+    }
+
+        boolean checkTrainerIndividualTime (Trainers myTrainer, LocalDateTime dateOfTraining){ // проверка индивидуального времени
+            boolean result = false;
+            if (!myTrainer.individualTrainings.containsKey(dateOfTraining) && myTrainer.workSchedule.containsKey(dateOfTraining)) {
+                result = true;
             }
-            myTrainer.workSchedule.remove(dateOfTraining);
-            myTrainer.groupTrainings.put(dateOfTraining, myTrainer.trainingDuration);
+            return result;
         }
-        else {
-            System.out.println(myTrainer.groupTrainings + "\nPlease choose the group time from available variants");
-            while (true) {
-                Scanner scan2 = new Scanner(System.in);
-                try {
-                    dateOfTraining = LocalDateTime.parse(scan2.nextLine(), formatter);
-                    System.out.println(dateOfTraining);
-                    break;
-                } catch (IllegalArgumentException ex) {
-                    System.out.println(String.format("Ooops! Something wrong", ex.getMessage()));
+
+        void receiveTimeInformation (Trainers myTrainer, LocalDateTime dateOfTraining, int mode, String lastName) { // вывод и отображение информации
+            Map<String, Map <LocalDateTime, Integer>> result = enjoyTraining(dateOfTraining, lastName, myTrainer, mode);
+            for (Map.Entry entry : result.entrySet()) {
+                for (Map.Entry temp: training.entrySet()) {
+                    System.out.println("Client name: " + entry.getKey() + "\nTraining date: " + temp.getKey() + "\nTraining duration: " + temp.getValue());
                 }
             }
         }
-        return dateOfTraining;
     }
 
-    LocalDateTime checkTrainerIndividualTime (Trainers myTrainer) {
-        LocalDateTime dateOfTraining = null;
-        System.out.println("Please enter your training time: ");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMM d, yyyy HH:mm:ss a");
-        while (true) {
-            Scanner scan1 = new Scanner(System.in);
-            try {
-                dateOfTraining = LocalDateTime.parse(scan1.nextLine(), formatter);
-                System.out.println(dateOfTraining);
-                break;
-            } catch (IllegalArgumentException ex) {
-                System.out.println(String.format("Ooops! Something wrong", ex.getMessage()));
-            }
-        }
-        myTrainer.workSchedule.remove(dateOfTraining);
-        myTrainer.individualTrainings.put(dateOfTraining, myTrainer.trainingDuration);
-        return dateOfTraining;
-    }
-
-    void enjoyFitness () {
-        Map<String, LocalDateTime> training = enjoyTraining();
-        for (Map.Entry entry : training.entrySet()) {
-                System.out.println("Client name: " + entry.getKey() + "\nTraining date: " + entry.getValue());
-            }
-        }
-}

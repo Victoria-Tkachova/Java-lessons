@@ -16,22 +16,26 @@ public class FitnessCenter {
     Map<LocalDateTime, Integer> training = new HashMap<>();
 
     boolean recruitTrainer(Trainers newTrainer, int shift) { // нанимаем тренера на работу
-        int currentYear = LocalDate.now().getYear();
-        LocalDate recruitDate = LocalDate.now();
-        LocalDate nextDay = recruitDate;
-        boolean checkYear = checkCurrentYear(recruitDate, currentYear);
-        while (checkYear) {
-            if (checkWorkingDay(nextDay) == true) {
-                newTrainer.workSchedule.put(LocalDateTime.of(nextDay, LocalTime.of(shift == 1 ? firstShiftBegin : secondShiftBegin, 0)), newTrainer.trainingDuration);
+        boolean result = false;
+        if (shift == 1 || shift == 2) {
+            int currentYear = LocalDate.now().getYear();
+            LocalDate recruitDate = LocalDate.now();
+            LocalDate nextDay = recruitDate;
+            boolean checkYear = checkCurrentYear(recruitDate, currentYear);
+            while (checkYear) {
+                if (checkWorkingDay(nextDay) == true) {
+                    newTrainer.workSchedule.put(LocalDateTime.of(nextDay, LocalTime.of(shift == 1 ? firstShiftBegin : secondShiftBegin, 0)), newTrainer.trainingDuration);
+                }
+                nextDay = nextDay.plusDays(1);
+                checkYear = checkCurrentYear(nextDay, currentYear);
             }
-            nextDay = nextDay.plusDays(1);
-            checkYear = checkCurrentYear(nextDay, currentYear);
+            System.out.println(newTrainer.workSchedule);
+            result = fitnessCenter.add(newTrainer);
         }
-        System.out.println(newTrainer.workSchedule);
-        return fitnessCenter.add(newTrainer);
+        return result;
     }
 
-    private boolean checkWorkingDay(LocalDate recruitDate) { // проверяем рабочий ли день приема на работу
+    boolean checkWorkingDay(LocalDate recruitDate) { // проверяем рабочий ли день приема на работу
         if (recruitDate.getDayOfWeek().getValue() < workDayCounter) {
             if (!holidays.contains(recruitDate)) {
                 return true;
@@ -69,7 +73,7 @@ public class FitnessCenter {
     void modeOfTrainerChoose(int mode) { // выбор тренера по фамилиии или по спорт типу (1 - фамилия, 2 - спорт тип)
         switch (mode) {
             case 1:
-                for (Trainers temp : fitnessCenter) {
+                for (Trainers temp : fitnessCenter) { // добавить сортировку
                     System.out.println(temp.getSurname());
                 }
                 break;

@@ -4,15 +4,15 @@ import java.util.Comparator;
 
 public class Product implements Comparable <Product> {
     String productTitle;
-    float productPrice;
+    int productPrice;
 
-    Product (String productTitle, float productPrice) {
+    Product (String productTitle, int productPrice) {
         this.productPrice = productPrice;
         this.productTitle = productTitle;
     }
 
     String getProductTitle () { return productTitle; }
-    float getProductPrice () { return productPrice; }
+    int getProductPrice () { return productPrice; }
 // ?????????????????
     public int compareByPrice(Product p) {
         return productPrice > p.getProductPrice() ? 1 : (productPrice == p.getProductPrice() ? 0 : -1);
